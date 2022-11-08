@@ -1,0 +1,32 @@
+apiVersion: batch/v1 
+kind: Job 
+metadata:   
+  name: gnn-training-job
+  namespace: default  
+  labels:     
+    jobname: gnn-training-job 
+spec:   
+  ttlSecondsAfterFinished: 60
+  template:     
+    metadata:       
+      name: gnn-training-job-pod      
+      labels:         
+        app: gnn-training-job-pod   
+    spec:     
+      containers:       
+      - name: gnn-trainer
+        resources:
+          requests:
+            memory: "250G"
+          limits:
+            nvidia.com/gpu: 1      
+        image: <obfuscated>
+        volumeMounts:
+        - name: dshm
+          mountPath: /dev/shm 
+        imagePullPolicy: IfNotPresent     
+      restartPolicy: OnFailure
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
